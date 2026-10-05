@@ -23,6 +23,7 @@ var src=source&&typeof source==="object"?source:{},oldProjects=Array.isArray(src
 var tasks=oldTasks.map(function(x,i){x=x&&typeof x==="object"?x:{};var st=statusOf(x.status),storedProgress=legacy?(x.progress!==undefined?x.progress:x.actualProgress):(x.actualProgress!==undefined?x.actualProgress:x.progress),progress=clamp(storedProgress===undefined?0:storedProgress,0,100);
 if(st==="completed")progress=100;
 var t=Object.assign({},x,{id:String(x.id||("t"+Date.now()+"-"+i)),name:String(x.name||"Untitled task"),project:String(x.project||x.projectId||""),plannedStart:x.plannedStart||x.start||"",plannedEnd:x.plannedEnd||x.end||"",actualStart:x.actualStart||"",actualCompletion:x.actualCompletion||x.actualEnd||"",actualProgress:progress,status:st,priority:clamp(x.priority===undefined?2:x.priority,1,3),weight:Number(x.weight)>0?Number(x.weight):1,notes:String(x.notes||"")});
+delete t.progress;
 if(t.actualCompletion&&t.status!=="completed"&&t.actualProgress>=100)t.status="completed";return t;});
 var projects=oldProjects.map(function(x,i){x=x&&typeof x==="object"?x:{};var id=String(x.id||("p"+Date.now()+"-"+i)),children=tasks.filter(function(t){return t.project===id;});
 var st=x.status?statusOf(x.status):(children.length&&children.every(function(t){return t.status==="completed";})?"completed":children.some(function(t){return t.status==="in_progress";})?"in_progress":children.length&&children.every(function(t){return t.status==="on_hold";})?"on_hold":"not_started");
