@@ -1,4 +1,4 @@
-# MG Execution Dashboard V2
+# MG Execution Dashboard V2.1
 
 Independent Arabic-first PWA for managing projects, tasks, schedules, weighted progress, deadlines, history, and JSON backups.
 
@@ -12,8 +12,8 @@ The dashboard summarizes overall actual and planned progress, schedule variance,
 
 ## Data and migration
 
-Data is stored locally in browser LocalStorage. Existing `mg_exec_v1` records are migrated to `mg_exec_v2` on first load. The legacy record is retained. JSON export/import includes V2 fields and imports older backups through the same migration.
+Data is stored locally in browser LocalStorage. Existing `mg_exec_v1` records are migrated to `mg_exec_v2` on first load. V1 `progress` values are migrated into the V2 `actualProgress` field, completed tasks normalize to 100%, and the legacy record is retained. Calculation self-checks cover weighted progress, schedule states, and exclusion of completed tasks from upcoming deadlines. The service worker cache is `mg-exec-v2.1`. JSON export/import includes V2 fields and imports older backups through the same migration.
 
 ## Deployment
 
-GitHub Pages serves the repository root from `main`. The service worker cache is `mg-exec-v2` and only removes older `mg-exec-*` caches.
+GitHub Pages serves the repository root from `main`. The service worker cache is `mg-exec-v2.1` and only removes older `mg-exec-*` caches.
