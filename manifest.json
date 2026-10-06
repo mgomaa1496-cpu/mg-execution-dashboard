@@ -1,1 +1,17 @@
-{"name": "MG Execution Dashboard", "short_name": "MG Dashboard", "start_url": "./", "display": "standalone", "background_color": "#f4f1e9", "theme_color": "#142637"}
+{
+  "id": "./",
+  "name": "MG Execution Dashboard",
+  "short_name": "MG Execution",
+  "description": "Local-first execution management for projects, tasks, and schedules.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#f5f4ef",
+  "theme_color": "#142637",
+  "icons": [
+    {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}

@@ -1,25 +1,25 @@
-# MG Execution Dashboard V2.4
+# MG Execution Dashboard V3
 
-Independent Arabic-first PWA for managing projects, tasks, schedules, weighted progress, deadlines, history, and JSON backups.
+An Arabic-first, bilingual local-first Progressive Web App for execution management. The dashboard keeps the current MG identity (navy, off-white, muted olive, cyan) and adds an executive summary with weighted progress, schedule comparison, current focus, deadlines, project summaries, completion history, and responsive layouts.
 
-## Execution tracking
+## V2.5 schedule calculations
 
-Tasks use the V2.2 canonical model for `status`, `actualProgress`, `weight`, `plannedStart`, `plannedEnd`, `actualStart`, `actualEnd`, `priority`, and `notes`. Legacy task `progress` and `actualCompletion` fields are migrated and removed from canonical task records.
+Overall Actual Progress remains the weighted average across all tasks. Planned Progress uses only tasks with valid planned start and end dates. The scheduled-task Actual Progress shown beside Planned Progress is calculated over that exact same scheduled task set and weights. Schedule Variance is scheduled-task Actual minus Planned. Project Actual remains weighted across all project tasks; project schedule comparisons use that project's scheduled subset. Unscheduled work is excluded from ahead/on-track/behind comparison. Dates and existing task values are not rewritten by the V3 UI upgrade.
 
-Dashboard totals, project progress, task cards, and diagnostics use the same centralized calculation functions. Project and overall progress are weighted averages over canonical tasks. Completing a task sets its actual progress to 100%; elapsed time affects planned progress and schedule status only.
+## Data safety and storage
 
-Automatic schedule metrics include planned and actual duration, days remaining, days early/late, planned and actual progress, schedule variance, and Ahead / On Track / Behind / Overdue / Completed status. JSON export/import supports V2.2 and older backups.
+The canonical V2.2 project/task data remains in LocalStorage at `mg_exec_v2`; old V1 data is migrated without replacing the original legacy record. V2.2 records continue to load as-is, preserving task names, project names, dates, notes, weights, and progress. A small `StorageAdapter` interface with `LocalStorageAdapter` isolates persistence so a future adapter can be added without coupling storage calls to UI rendering. No cloud service is connected and task data is not sent off-device. Language and notification preferences use a separate local key, `mg_exec_preferences_v3`.
 
-## Baseline plan loader
+JSON export/import keeps the existing project/task schema and all V2.2 fields. Refresh does not seed or reset saved projects/tasks. The optional baseline loader is shown only for an empty workspace.
 
-The Data page offers **تحميل الخطة الأساسية** only when no projects or tasks exist. After confirmation, it creates the three baseline projects and eight tasks, records `Baseline plan loaded` in History, and relies on the V2.2 calculation functions to update Dashboard and Data Diagnostics. The loader uses weight 1, leaves unconfirmed dates blank, and uses only the three confirmed actual completion dates. It does not change `schemaVersion: "2.2"`.
+## Language and notifications
 
-The service worker cache is `mg-exec-v2.4` and removes older `mg-exec-*` caches.
+Arabic is the default and uses RTL layout; English can be selected from the header or settings. The preference is stored locally. Notification settings expose browser permission and toggles for approaching deadlines, overdue work, behind-schedule work, weekly summaries, and completion milestones. Browser permission is requested only after a direct user click. These are preparation/settings only: the PWA does not claim background push or server-driven notifications. The app must be opened to evaluate conditions.
 
-## Deployment
+## PWA and offline use
 
-GitHub Pages serves the repository root from `main`.
+The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
 
-## Schedule logic (V2.4)
+## Validation
 
-A task is scheduled only when it has valid Planned Start and Planned End dates. Unscheduled tasks are excluded from planned progress and schedule comparisons. Project planned progress uses scheduled tasks only; overall planned progress uses scheduled tasks only, and shows `—` when none are scheduled. Schedule variance also shows `—` without comparable schedule data, and overall schedule status shows `No Schedule / غير مجدول`. Overdue, Nearest Deadline, and Upcoming Deadlines require an incomplete task with a valid Planned End. Data Diagnostics includes Scheduled Tasks and Unscheduled Tasks. The Current Priority card provides `تحديد الجدول` for an unscheduled task and opens its edit form. V2.3 actual progress and LocalStorage data remain unchanged.
+At startup, built-in V2.5 checks verify that scheduled Actual and Planned calculations use the same weighted task set, variance subtracts the two comparable values, completed work resolves to 100%, overdue dates remain overdue, and unscheduled tasks are not scheduled. Manual release checks should cover browser refresh, offline shell loading, both language directions, mobile viewport behavior, and LocalStorage preservation.
