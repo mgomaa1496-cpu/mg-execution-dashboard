@@ -2,6 +2,12 @@
 
 An Arabic-first, bilingual local-first Progressive Web App for execution management. The dashboard keeps the current MG identity (navy, off-white, muted olive, cyan) and adds an executive summary with weighted progress, schedule comparison, current focus, deadlines, project summaries, completion history, and responsive layouts.
 
+## V3.3 smart notifications
+
+The notification center stores alerts separately from task/project data in `mg_exec_notifications_v1`; alert preferences remain in the separate local preferences key. Deadline reminders are generated on their 7, 3, and 1 day marks, with separate due-today, overdue, behind-schedule, task completion, project milestone, and weekly-summary alerts. Stable alert IDs prevent duplicates on refresh. The weekly summary is produced once per ISO week when the app is opened and the setting is enabled. The dashboard shows up to three currently relevant alerts. Browser permission is requested only after the user enables Browser Notifications or presses the explicit permission button. Local browser notifications are only emitted while the app is open and visible with permission granted. Closed-app background delivery requires future Cloud/Web Push infrastructure.
+
+Settings independently control browser display, reminders, overdue, behind-schedule, completion, project milestones, and weekly summaries. Arabic and English notification labels and messages are supported.
+
 ## V3.2 executive desktop layout polish
 
 The dashboard uses a wide, capped desktop container; a paired completion/schedule overview; a single-row KPI strip; full-width focus and project sections; three equal project cards with completion and completed/total counts; paired deadline/completion panels; and a full-width trend section with its existing empty state. The header is compact. Tablet and mobile breakpoints progressively stack content, with a single-column layout at narrow phone widths. No calculations, storage keys, migration, task/project dates, or saved data are changed by this release.
@@ -28,8 +34,8 @@ Arabic is the default and uses RTL layout; English can be selected from the head
 
 ## PWA and offline use
 
-The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3.5`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
+The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3.6`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
 
 ## Validation
 
-At startup, built-in V2.5 checks verify that scheduled Actual and Planned calculations use the same weighted task set, variance subtracts the two comparable values, completed work resolves to 100%, overdue dates remain overdue, and unscheduled tasks are not scheduled. Manual release checks should cover browser refresh, offline shell loading, both language directions, mobile viewport behavior, and LocalStorage preservation.
+At startup, built-in V2.5 checks verify that scheduled Actual and Planned calculations use the same weighted task set, variance subtracts the two comparable values, completed work resolves to 100%, overdue dates remain overdue, and unscheduled tasks are not scheduled. Automated fixed-date alert checks cover 7/3/1-day reminders, due today, overdue, behind schedule, completion and 50% milestone deduplication, and browser permission states. Refresh checks use stable IDs. Manual release checks should cover the notification center, settings toggles, browser refresh, offline shell loading, both language directions, and LocalStorage preservation.
