@@ -104,14 +104,33 @@ var checks=[getTaskActualProgress(completed)===100,getTaskPlannedProgress(behind
 db=prior;
 if(checks.some(function(ok){return !ok;}))throw new Error("V2.2 calculation self-check failed: "+checks.map(function(ok,i){return ok?"":String(i+1);}).filter(Boolean).join(","));
 console.info("V2.2 calculation and migration self-checks passed: "+checks.length);
+};var event=function(s){db.events.unshift({date:new Date().toISOString(),msg:s});};
+var loadBaseline=function(){
+if(db.projects.length||db.tasks.length)return false;
+var ids={identity:"baseline-identity",proof:"baseline-proof",product:"baseline-product"};
+db.projects=[
+{id:ids.identity,name:"Professional Identity",stage:"Identity",status:"completed",priority:2,plannedStart:"",plannedEnd:"",actualStart:"",actualCompletion:"",notes:"",description:""},
+{id:ids.proof,name:"Proof of Work",stage:"Proof",status:"in_progress",priority:2,plannedStart:"",plannedEnd:"",actualStart:"",actualCompletion:"",notes:"",description:""},
+{id:ids.product,name:"Independent Product",stage:"Product",status:"in_progress",priority:2,plannedStart:"",plannedEnd:"",actualStart:"",actualCompletion:"",notes:"",description:""}
+];
+var task=function(id,name,project,status,actualProgress,actualEnd){return{id:id,name:name,project:project,status:status,actualProgress:actualProgress,weight:1,plannedStart:"",plannedEnd:"",actualStart:"",actualEnd:actualEnd||"",priority:2,notes:""};};
+db.tasks=[
+task("baseline-linkedin","LinkedIn",ids.identity,"completed",100,""),
+task("baseline-cv","Professional CV",ids.identity,"completed",100,""),
+task("baseline-portfolio","Professional Portfolio",ids.identity,"completed",100,"2026-10-01"),
+task("baseline-case-01","Case Study 01 — EXCITECH EP380",ids.proof,"completed",100,"2026-09-30"),
+task("baseline-case-02","Case Study 02 — Factory Digital Transformation",ids.proof,"completed",100,"2026-10-04"),
+task("baseline-manufacturing-data","Manufacturing Data & Operational Intelligence",ids.proof,"in_progress",0,""),
+task("baseline-case-03","Case Study 03",ids.proof,"not_started",0,""),
+task("baseline-factory-mvp","Factory Platform MVP",ids.product,"in_progress",10,"")
+];
+db.schemaVersion=SCHEMA_VERSION;db.updatedAt=new Date().toISOString();event("Baseline plan loaded");return true;
 };
-var event=function(s){db.events.unshift({date:new Date().toISOString(),msg:s});};
 var projectCard=function(p){var a=getProjectActualProgress(p.id),pl=getProjectPlannedProgress(p.id),v=a-pl;
 return'<article class="card"><div class="row mobile-stack"><div><span class="pill">'+esc(p.stage)+'</span><h3>'+esc(p.name)+'</h3><div class="actions">'+sBadge(p.status)+' '+badge(getProjectScheduleStatus(p))+' '+badge("Priority: "+priorityName(p.priority))+'</div></div><b>'+a+'% actual</b></div><div class="dual-bars"><small>Actual '+a+'%</small>'+bar(a)+'<small>Planned '+pl+'%</small>'+bar(pl,"planned")+'</div><div class="small-grid">'+metric("Tasks",children(p.id).length)+metric("Schedule variance",(v>0?"+":"")+v+"%")+metric("Planned duration",dayText(plannedDuration(p.plannedStart,p.plannedEnd)))+metric("Actual duration",dayText(actualDuration(p.actualStart,p.actualCompletion)))+metric("Days remaining",dayText(remaining(p.plannedEnd)))+metric("Days early / late",earlyLateText(earlyLate(p)))+'</div><p class="muted">'+esc(p.notes||p.description)+'</p><p class="muted">Planned: '+esc(p.plannedStart||"—")+' → '+esc(p.plannedEnd||"—")+' · Actual: '+esc(p.actualStart||"—")+' → '+esc(p.actualCompletion||"—")+'</p><div class="actions"><button class="ghost" data-action="edit-project" data-id="'+esc(p.id)+'">تعديل</button><button class="ghost" data-action="delete-project" data-id="'+esc(p.id)+'">حذف</button></div></article>';};
 var taskCard=function(t,compact){var a=getTaskActualProgress(t),pl=getTaskPlannedProgress(t,today()),p=project(t.project);
 return'<article class="card task '+(t.status==="completed"?"completed":"")+'"><div class="row mobile-stack"><div><span class="pill">'+esc(p?p.name:"No project")+'</span><h3>'+esc(t.name)+'</h3><div class="actions">'+sBadge(t.status)+' '+scheduleFor(t)+' '+badge("Priority: "+priorityName(t.priority))+' '+badge("Weight: "+t.weight)+'</div></div><b>'+a+'% actual</b></div><div class="dual-bars"><small>Actual '+a+'%</small>'+bar(a)+'<small>Planned '+pl+'%</small>'+bar(pl,"planned")+'</div>'+(compact?"":'<div class="small-grid">'+metric("Planned duration",dayText(plannedDuration(t.plannedStart,t.plannedEnd)))+metric("Actual duration",dayText(actualDuration(t.actualStart,t.actualEnd)))+metric("Days remaining",dayText(remaining(t.plannedEnd)))+metric("Days early / late",earlyLateText(earlyLate(t)))+'</div>')+'<p class="muted">'+esc(t.notes)+'</p><p class="muted">Planned: '+esc(t.plannedStart||"—")+' → '+esc(t.plannedEnd||"—")+' · Actual: '+esc(t.actualStart||"—")+' → '+esc(t.actualEnd||"—")+'</p><div class="actions"><button class="ghost" data-action="edit-task" data-id="'+esc(t.id)+'">تعديل</button>'+(t.status==="completed"?"":'<button class="btn" data-action="complete-task" data-id="'+esc(t.id)+'">إكمال</button>')+'<button class="ghost" data-action="delete-task" data-id="'+esc(t.id)+'">حذف</button></div></article>';};
-var render=function(){
-save();var oa=getOverallActualProgress(),op=getOverallPlannedProgress(),v=getScheduleVariance(),completed=db.tasks.filter(function(t){return t.status==="completed";}),inProgress=db.tasks.filter(function(t){return t.status==="in_progress";}),overdue=db.tasks.filter(function(t){return getTaskScheduleStatus(t)==="Overdue";});
+var render=function(){save();var baselineButton=E("loadBaseline");if(baselineButton)baselineButton.hidden=db.projects.length>0||db.tasks.length>0;var oa=getOverallActualProgress(),op=getOverallPlannedProgress(),v=getScheduleVariance(),completed=db.tasks.filter(function(t){return t.status==="completed";}),inProgress=db.tasks.filter(function(t){return t.status==="in_progress";}),overdue=db.tasks.filter(function(t){return getTaskScheduleStatus(t)==="Overdue";});
 E("overallActual").textContent=oa+"%";E("overallActualBar").style.width=oa+"%";E("overallPlanned").textContent=op+"%";E("overallVariance").textContent=(v>0?"+":"")+v+"%";E("overallVariance").className=v>0?"variance-positive":v<0?"variance-negative":"";
 E("overallHealth").textContent=overdue.length?"Overdue":v>5?"Ahead":v< -5?"Behind":"On Track";E("completedCount").textContent=completed.length;E("totalTasks").textContent="of "+db.tasks.length+" tasks";E("inProgressCount").textContent=inProgress.length;E("overdueCount").textContent=overdue.length;E("activeProjects").textContent=db.projects.filter(function(p){return p.status==="in_progress";}).length;
 var upcoming=upcomingTasks(db.tasks),nearest=nearestIncompleteDeadline(db.tasks);
@@ -143,7 +162,7 @@ if(a==="new-project")openProject();if(a==="new-task")openTask();if(a==="edit-pro
 if(a==="delete-task"&&confirm("حذف المهمة؟")){db.tasks=db.tasks.filter(function(t){return t.id!==id;});render();}
 if(a==="delete-project"&&confirm("حذف المشروع وكل مهامه؟")){db.projects=db.projects.filter(function(p){return p.id!==id;});db.tasks=db.tasks.filter(function(t){return t.project!==id;});render();}
 if(a==="complete-task"){var t=db.tasks.find(function(x){return x.id===id;});if(t){t.status="completed";t.actualProgress=100;if(!t.actualEnd)t.actualEnd=today();if(!t.actualStart)t.actualStart=t.actualEnd;event("Completed task: "+t.name);render();}}
-if(a==="export"){var blob=new Blob([JSON.stringify(Object.assign({},db,{schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString()}),null,2)],{type:"application/json"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="MG_Execution_Dashboard_V2_2_"+today()+".json";link.click();URL.revokeObjectURL(link.href);}
+if(a==="export"){var blob=new Blob([JSON.stringify(Object.assign({},db,{schemaVersion:SCHEMA_VERSION,exportedAt:new Date().toISOString()}),null,2)],{type:"application/json"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="MG_Execution_Dashboard_V2_2_"+today()+".json";link.click();URL.revokeObjectURL(link.href);}if(a==="load-baseline"){if(db.projects.length||db.tasks.length){alert("الخطة الأساسية متاحة فقط عندما لا توجد مشاريع أو مهام.");return;}if(confirm("تحميل الخطة الأساسية؟ سيتم إنشاء 3 مشاريع و8 مهام.")){if(loadBaseline())render();}}
 if(a==="reset"&&confirm("بدء جديد؟ سيُحذف مخزن V2 الحالي من هذا الجهاز.")){db={schemaVersion:SCHEMA_VERSION,projects:[],tasks:[],events:[],createdAt:new Date().toISOString()};render();}
 });
 E("importFile").addEventListener("change",function(e){var file=e.target.files&&e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var data=JSON.parse(reader.result);if(!data||!Array.isArray(data.projects)||!Array.isArray(data.tasks))throw new Error("Invalid backup");db=migrate(data);event("Imported V2.2 backup");render();}catch(err){alert("ملف غير صالح");}e.target.value="";};reader.readAsText(file);});
