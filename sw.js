@@ -1,4 +1,4 @@
-const CACHE='mg-exec-v2.2';
+const CACHE='mg-exec-v2.3';
 const SHELL=['./index.html','./app.js','./manifest.json'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('mg-exec-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
