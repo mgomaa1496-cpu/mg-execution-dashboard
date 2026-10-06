@@ -6,7 +6,7 @@ An Arabic-first, bilingual local-first Progressive Web App for execution managem
 
 The dashboard separates Overall Completion from Schedule Performance and presents KPIs, current focus, project completion versus scheduled comparison, deadlines, recent completions, and a bilingual empty state for trend history unless at least two actual/planned snapshots exist. Completion history dates alone are not treated as schedule trend points. Task completion and deletion require confirmation. System-generated history entries are localized while project/task names remain as entered.
 
-Built-in migration checks exercise V2.4-style planned and actual dates through canonical migration and JSON refresh serialization and verify schema 2.2 data is not replaced. The checks do not write the fixture into user storage. The app does not fill missing user dates automatically.
+Built-in migration checks exercise V2.4-style planned and actual dates through canonical migration and JSON refresh serialization and verify schema 2.2 data is not replaced. The checks do not write the fixture into user storage. The app does not fill missing user dates automatically. Review of the shipped V2.4 source showed its seed tasks had blank planned start dates; the live LocalStorage records inspected for this release likewise had blank planned starts and actual starts, while planned end dates remained. V2.4 used the same `mg_exec_v2` key and passed schema 2.2 records through unchanged. This points to the inspected browser dataset differing from the reported date set; it does not demonstrate a V2.4→V3 data-loss bug.
 
 ## V2.5 schedule calculations
 
@@ -24,7 +24,7 @@ Arabic is the default and uses RTL layout; English can be selected from the head
 
 ## PWA and offline use
 
-The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3.3`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
+The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3.4`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
 
 ## Validation
 
