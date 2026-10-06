@@ -2,11 +2,15 @@
 
 An Arabic-first, bilingual local-first Progressive Web App for execution management. The dashboard keeps the current MG identity (navy, off-white, muted olive, cyan) and adds an executive summary with weighted progress, schedule comparison, current focus, deadlines, project summaries, completion history, and responsive layouts.
 
+## V3.2 executive desktop layout polish
+
+The dashboard uses a wide, capped desktop container; a paired completion/schedule overview; a single-row KPI strip; full-width focus and project sections; three equal project cards with completion and completed/total counts; paired deadline/completion panels; and a full-width trend section with its existing empty state. The header is compact. Tablet and mobile breakpoints progressively stack content, with a single-column layout at narrow phone widths. No calculations, storage keys, migration, task/project dates, or saved data are changed by this release.
+
 ## V3.1 UI and persistence verification
 
 The dashboard separates Overall Completion from Schedule Performance and presents KPIs, current focus, project completion versus scheduled comparison, deadlines, recent completions, and a bilingual empty state for trend history unless at least two actual/planned snapshots exist. Completion history dates alone are not treated as schedule trend points. Task completion and deletion require confirmation. System-generated history entries are localized while project/task names remain as entered.
 
-Built-in migration checks exercise V2.4-style planned and actual dates through canonical migration and JSON refresh serialization and verify schema 2.2 data is not replaced. The checks do not write the fixture into user storage. The app does not fill missing user dates automatically. Review of the shipped V2.4 source showed its seed tasks had blank planned start dates; the live LocalStorage records inspected for this release likewise had blank planned starts and actual starts, while planned end dates remained. V2.4 used the same `mg_exec_v2` key and passed schema 2.2 records through unchanged. This points to the inspected browser dataset differing from the reported date set; it does not demonstrate a V2.4→V3 data-loss bug.
+Built-in migration checks exercise V2.4-style planned and actual dates through canonical migration and JSON refresh serialization and verify schema 2.2 data is not replaced. The checks do not write the fixture into user storage. The app does not fill missing user dates automatically. The reported planned and actual dates belong to the user's device. The separate Work/browser session used for release preview has independent LocalStorage, so its records cannot establish whether the user's device retained those dates. This UI-only release does not inspect, migrate, seed, or write user data.
 
 ## V2.5 schedule calculations
 
@@ -24,7 +28,7 @@ Arabic is the default and uses RTL layout; English can be selected from the head
 
 ## PWA and offline use
 
-The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3.4`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
+The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3.5`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
 
 ## Validation
 

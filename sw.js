@@ -1,5 +1,5 @@
-const CACHE='mg-exec-v3.4';
-const SHELL=['./','./index.html','./app.js?v=3.4','./manifest.json','./icon-192.png','./icon-512.png'];
+const CACHE='mg-exec-v3.5';
+const SHELL=['./','./index.html','./app.js?v=3.5','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('mg-exec-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
