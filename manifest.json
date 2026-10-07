@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "MG Execution Dashboard",
-  "short_name": "MG Execution",
-  "description": "Local-first execution management for projects, tasks, and schedules.",
+  "name": "MG Life & Execution",
+  "short_name": "MG Life",
+  "description": "Local-first personal life and execution management across work, learning, health, nutrition, and goals.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -11,7 +11,7 @@
   "background_color": "#f5f4ef",
   "theme_color": "#142637",
   "icons": [
-    {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {"src":"./icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"./icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ]
 }

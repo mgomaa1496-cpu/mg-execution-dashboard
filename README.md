@@ -1,4 +1,16 @@
-# MG Execution Dashboard V3
+# MG Life & Execution Dashboard V4
+
+## V4.0 life and execution workspace
+
+V4 broadens the existing Arabic-first PWA into a local-first personal life and execution workspace for work, learning, health and fitness, nutrition, personal tasks, and goals/habits. The refreshed desktop shell has a collapsible navy sidebar, profile area, search, language switch, notification drawer, category overview, today list, work projects, learning, health, nutrition, habits, and upcoming schedule. Tablet and phone layouts collapse to simpler navigation and a single-column content flow.
+
+The V4 profile and life records are stored in the existing `mg_exec_v2` document under `profile`, `courses`, `workouts`, `meals`, `waterLogs`, and `habits`. `lifeSchemaVersion: "4.0"` records the additive migration; the existing canonical `schemaVersion: "2.2"` remains unchanged. Missing categories are added as `work` once for legacy tasks. The migration preserves the existing project/task names, status, progress, dates, notes, weights, history, and the separate `mg_exec_notifications_v1` notification store. It is idempotent and does not reset or seed existing data. Work completion continues to calculate from Work-category tasks only; learning, health, nutrition, personal, and habits remain independent.
+
+Courses, workouts, meals/macros, water entries, and habits can be created and edited locally. Nutrition values are user-entered; the app does not generate calorie goals or medical advice. Task categories and daily aggregation bring work and personal tasks into Today. Course deadlines, workout reminders, and habit reminders join the V3.3 notification center using its existing stable IDs and local notification engine. Browser notification permission is still user initiated. Background delivery while the app is closed requires future Cloud/Web Push work.
+
+V4 deliberately does not add cloud sync, server login, backend services, real Web Push, store publishing, or factory inventory/pricing/customer features.
+
+## V3.3 smart notifications
 
 An Arabic-first, bilingual local-first Progressive Web App for execution management. The dashboard keeps the current MG identity (navy, off-white, muted olive, cyan) and adds an executive summary with weighted progress, schedule comparison, current focus, deadlines, project summaries, completion history, and responsive layouts.
 
@@ -34,7 +46,7 @@ Arabic is the default and uses RTL layout; English can be selected from the head
 
 ## PWA and offline use
 
-The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v3.6`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
+The app is installable from a compatible browser and includes 192px and 512px icons, standalone display settings, and responsive mobile/tablet/desktop layouts. Service worker cache version: `mg-exec-v4.0`. It caches the app shell for offline opening; data remains in LocalStorage. The static architecture can later be wrapped for Android/iOS, but no store package, cloud sync, backend, or push service is included in this phase.
 
 ## Validation
 
